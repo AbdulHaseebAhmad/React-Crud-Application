@@ -44,28 +44,29 @@ const EditForm = (props) => {
       const validateCheckboxHandler= () => {setMarked(!marked)};
 
       useEffect(() => {
-        const timeOut = setTimeout(() => {
-          setFormIsValid(
-            nameState.isValid && sectorState.isValid && subSectorState.isValid && marked)}
-        ,200)
+            const timeOut = setTimeout(() => {
+              setFormIsValid(
+                nameState.isValid && sectorState.isValid && subSectorState.isValid && marked)}
+            ,200)
+            return () => {clearTimeout(timeOut);}},[nameState.isValid,sectorState.isValid,subSectorState.isValid,marked]) 
 
-      const fetchSectors = async () => {
-        const response = await fetch("https://chris-cd3a5-default-rtdb.firebaseio.com/Sectors.json");
-        const responseData = await response.json();
-        const loadedSectors = [];
-        const loadedSubSectors=[];
+          useEffect(()=>{
+            const fetchSectors = async () => {
+              const response = await fetch("https://chris-cd3a5-default-rtdb.firebaseio.com/Sectors.json");
+              const responseData = await response.json();
+              const loadedSectors = [];
+              const loadedSubSectors=[];
 
-        for(const key in responseData){
-            loadedSectors.push({
-                id:key,
-                jobs:responseData[key],})}
-        setSectors(loadedSectors);
+              for(const key in responseData){
+                  loadedSectors.push({
+                      id:key,
+                      jobs:responseData[key],})}
+              setSectors(loadedSectors);
 
-        for(const key in loadedSectors){
-          loadedSubSectors.push(Object.values(loadedSectors[key].jobs))}
-          setSubSectors(loadedSubSectors.flat(loadedSubSectors.length));} 
-          fetchSectors();
-          return () => {clearTimeout(timeOut);}},[nameState.isValid,sectorState.isValid,subSectorState.isValid,marked]) 
+              for(const key in loadedSectors){
+                loadedSubSectors.push(Object.values(loadedSectors[key].jobs))}
+                setSubSectors(loadedSubSectors.flat(loadedSubSectors.length));} 
+                fetchSectors();},[]) 
 
       const submitHandler = (event) => {
       event.preventDefault();
